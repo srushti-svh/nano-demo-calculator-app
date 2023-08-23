@@ -17,6 +17,7 @@ crow::response subtract(const crow::request &req)
 }
 */
 
+/*
 #include "crow_all.h"
 
 crow::response greeting()
@@ -56,6 +57,54 @@ int main()
 
     CROW_ROUTE(app, "/calculator/subtract").methods("POST"_method)([](const crow::request &req) {
         return subtract(req);
+    });
+
+    app.port(8080).multithreaded().run();
+    return 0;
+}
+*/
+
+#include "crow_all.h"
+
+int main()
+{
+    crow::SimpleApp app;
+
+    CROW_ROUTE(app, "/calculator/greeting")
+    ([]{
+        return "Hello world!";
+    });
+
+    CROW_ROUTE(app, "/calculator/add")
+    .methods("POST"_method)
+    ([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        if (!json)
+            return crow::response(400, "Invalid JSON");
+        
+        int firstNum = json["first"].i();
+        int secondNum = json["second"].i();
+        int result = firstNum + secondNum;
+
+        crow::json::wvalue responseJson;
+        responseJson["result"] = result;
+        return crow::response(responseJson);
+    });
+
+    CROW_ROUTE(app, "/calculator/subtract")
+    .methods("POST"_method)
+    ([](const crow::request& req) {
+        auto json = crow::json::load(req.body);
+        if (!json)
+            return crow::response(400, "Invalid JSON");
+        
+        int firstNum = json["first"].i();
+        int secondNum = json["second"].i();
+        int result = firstNum - secondNum;
+
+        crow::json::wvalue responseJson;
+        responseJson["result"] = result;
+        return crow::response(responseJson);
     });
 
     app.port(8080).multithreaded().run();
