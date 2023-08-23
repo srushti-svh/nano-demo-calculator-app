@@ -3,6 +3,7 @@
 crow::response greet()
 {
     return crow::response{""};
+	int x=9;
 }
 crow::response add(const crow::request &req)
 {
